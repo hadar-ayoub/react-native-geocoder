@@ -58,20 +58,20 @@ function format(raw) {
 }
 
 export default {
-  geocodePosition(apiKey, position) {
+  geocodePosition(apiKey, position, lang) {
     if (!apiKey || !position || !position.lat || !position.lng) {
       return Promise.reject(new Error("invalid apiKey / position"));
     }
 
-    return this.geocodeRequest(`${googleUrl}?key=${apiKey}&latlng=${position.lat},${position.lng}`);
+    return this.geocodeRequest(`${googleUrl}?key=${apiKey}&latlng=${position.lat},${position.lng}&language=${lang}`);
   },
 
-  geocodeAddress(apiKey, address) {
+  geocodeAddress(apiKey, address, lang) {
     if (!apiKey || !address) {
       return Promise.reject(new Error("invalid apiKey / address"));
     }
 
-    return this.geocodeRequest(`${googleUrl}?key=${apiKey}&address=${encodeURI(address)}`);
+    return this.geocodeRequest(`${googleUrl}?key=${apiKey}&address=${encodeURI(address)}&language=${lang}`);
   },
 
   async geocodeRequest(url) {
@@ -81,7 +81,6 @@ export default {
     if (!json.results || json.status !== 'OK') {
       return Promise.reject(new Error(`geocoding error ${json.status}, ${json.error_message}`));
     }
-
     return json.results.map(format);
   }
 }
