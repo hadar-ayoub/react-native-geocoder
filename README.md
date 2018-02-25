@@ -74,9 +74,9 @@ import Geocoder from 'react-native-geocoder';
 var NY = {
   lat: 40.7809261,
   lng: -73.9637594
-};
-
-Geocoder.geocodePosition(NY).then(res => {
+}e
+var language = 'ar';
+Geocoder.geocodePosition(NY, language).then(res => {
     // res is an Array of geocoding object (see below)
 })
 .catch(err => console.log(err))
@@ -88,6 +88,8 @@ Geocoder.geocodeAddress('New York').then(res => {
 .catch(err => console.log(err))
 ```
 
+Here is the list of supported language codes :  [languages support](https://developers.google.com/maps/faq#languagesupport)
+
 ## Fallback to google maps geocoding
 
 Geocoding services might not be included in some Android devices (Kindle, some 4.1 devices, non-google devices). For those special cases the lib can fallback to the [online google maps geocoding service](https://developers.google.com/maps/documentation/geocoding/intro#Geocoding)
@@ -98,7 +100,7 @@ import Geocoder from 'react-native-geocoder';
 Geocoder.fallbackToGoogle(MY_KEY);
 
 // use the lib as usual
-let ret = await Geocoder.geocodePosition({lat, lng})
+let ret = await Geocoder.geocodePosition({lat, lng},language)
 // you get the same results
 
 ```
