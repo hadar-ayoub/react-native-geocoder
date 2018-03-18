@@ -23,6 +23,7 @@
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
+                  language:(NSString *)language
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -33,7 +34,12 @@ RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
   if (self.geocoder.geocoding) {
     [self.geocoder cancelGeocode];
   }
-
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"AppleLanguages"];
+    NSString * oldLang = [[NSLocale preferredLanguages] objectAtIndex:0];
+    self.oldLanguage = oldLang;
+    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObjects:language, nil] forKey:@"AppleLanguages"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
   [self.geocoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
 
     if (error) {
@@ -50,6 +56,7 @@ RCT_EXPORT_METHOD(geocodePosition:(CLLocation *)location
 }
 
 RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
+                  language:(NSString *)language
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
@@ -60,7 +67,12 @@ RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
     if (self.geocoder.geocoding) {
       [self.geocoder cancelGeocode];
     }
-
+    [[NSUserDefaults standardUserDefaults]removeObjectForKey:@"AppleLanguages"];
+    NSString * oldLang = [[NSLocale preferredLanguages] objectAtIndex:0];
+    self.oldLanguage = oldLang;
+    [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObjects:language, nil] forKey:@"AppleLanguages"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
     [self.geocoder geocodeAddressString:address completionHandler:^(NSArray *placemarks, NSError *error) {
 
         if (error) {
@@ -115,6 +127,12 @@ RCT_EXPORT_METHOD(geocodeAddress:(NSString *)address
     [results addObject:result];
   }
 
+    if(self.oldLanguage){
+        [[NSUserDefaults standardUserDefaults] setObject:[NSArray arrayWithObjects:self.oldLanguage, nil] forKey:@"AppleLanguages"];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        self.oldLanguage = nil;
+    }
+    
   return results;
 
 }
